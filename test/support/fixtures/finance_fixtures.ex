@@ -20,4 +20,21 @@ defmodule FinancialApp.FinanceFixtures do
 
     receita
   end
+
+  @doc """
+  Generate a despesa.
+  """
+  def despesa_fixture(attrs \\ %{}) do
+    {:ok, despesa} =
+      attrs
+      |> Enum.into(%{
+        categoria: "some categoria",
+        data: ~D[2024-11-17],
+        nome: "some nome",
+        valor: "120.5"
+      })
+      |> FinancialApp.Finance.create_despesa()
+
+    despesa
+  end
 end

@@ -20,6 +20,8 @@ defmodule FinancialAppWeb.Router do
     get "/", PageController, :home
 
     resources "/receitas", ReceitaController
+    resources "/despesas", DespesaController
+
   end
 
   # Other scopes may use custom stacks.

@@ -62,4 +62,64 @@ defmodule FinancialApp.FinanceTest do
       assert %Ecto.Changeset{} = Finance.change_receita(receita)
     end
   end
+
+  describe "despesas" do
+    alias FinancialApp.Finance.Despesa
+
+    import FinancialApp.FinanceFixtures
+
+    @invalid_attrs %{categoria: nil, data: nil, nome: nil, valor: nil}
+
+    test "list_despesas/0 returns all despesas" do
+      despesa = despesa_fixture()
+      assert Finance.list_despesas() == [despesa]
+    end
+
+    test "get_despesa!/1 returns the despesa with given id" do
+      despesa = despesa_fixture()
+      assert Finance.get_despesa!(despesa.id) == despesa
+    end
+
+    test "create_despesa/1 with valid data creates a despesa" do
+      valid_attrs = %{categoria: "some categoria", data: ~D[2024-11-17], nome: "some nome", valor: "120.5"}
+
+      assert {:ok, %Despesa{} = despesa} = Finance.create_despesa(valid_attrs)
+      assert despesa.categoria == "some categoria"
+      assert despesa.data == ~D[2024-11-17]
+      assert despesa.nome == "some nome"
+      assert despesa.valor == Decimal.new("120.5")
+    end
+
+    test "create_despesa/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Finance.create_despesa(@invalid_attrs)
+    end
+
+    test "update_despesa/2 with valid data updates the despesa" do
+      despesa = despesa_fixture()
+      update_attrs = %{categoria: "some updated categoria", data: ~D[2024-11-18], nome: "some updated nome", valor: "456.7"}
+
+      assert {:ok, %Despesa{} = despesa} = Finance.update_despesa(despesa, update_attrs)
+      assert despesa.categoria == "some updated categoria"
+      assert despesa.data == ~D[2024-11-18]
+      assert despesa.nome == "some updated nome"
+      assert despesa.valor == Decimal.new("456.7")
+    end
+
+    test "update_despesa/2 with invalid data returns error changeset" do
+      despesa = despesa_fixture()
+      assert {:error, %Ecto.Changeset{}} = Finance.update_despesa(despesa, @invalid_attrs)
+      assert despesa == Finance.get_despesa!(despesa.id)
+    end
+
+    test "delete_despesa/1 deletes the despesa" do
+      despesa = despesa_fixture()
+      assert {:ok, %Despesa{}} = Finance.delete_despesa(despesa)
+      assert_raise Ecto.NoResultsError, fn -> Finance.get_despesa!(despesa.id) end
+    end
+
+    test "change_despesa/1 returns a despesa changeset" do
+      despesa = despesa_fixture()
+      assert %Ecto.Changeset{} = Finance.change_despesa(despesa)
+    end
+  end
 end
