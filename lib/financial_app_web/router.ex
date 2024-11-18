@@ -18,6 +18,8 @@ defmodule FinancialAppWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    resources "/receitas", ReceitaController
   end
 
   # Other scopes may use custom stacks.
