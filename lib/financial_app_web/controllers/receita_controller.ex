@@ -4,10 +4,17 @@ defmodule FinancialAppWeb.ReceitaController do
   alias FinancialApp.Finance
   alias FinancialApp.Finance.Receita
 
-  def index(conn, _params) do
-    receitas = Finance.list_receitas()
+  def index(conn, params) do
+    receitas =
+      if Enum.empty?(params) do
+        Finance.list_receitas()
+      else
+        Finance.filter_receitas(params)
+      end
+
     render(conn, :index, receitas: receitas)
   end
+
 
   def new(conn, _params) do
     changeset = Finance.change_receita(%Receita{})

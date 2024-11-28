@@ -8,6 +8,48 @@ defmodule FinancialApp.Finance do
 
   alias FinancialApp.Finance.Receita
 
+  def filter_receitas(params) do
+    query = from r in Receita
+
+    # Filtro por mês
+    query =
+      if params["month"] && params["month"] != "" do
+        case Integer.parse(params["month"]) do
+          {month, _} -> from r in query, where: fragment("EXTRACT(MONTH FROM ?)", r.data) == ^month
+          :error -> query
+        end
+      else
+        query
+      end
+
+    # Filtro por intervalo de datas
+    query =
+      if params["start_date"] != "" && params["end_date"] != "" do
+        from r in query, where: r.data >= ^Date.from_iso8601!(params["start_date"]) and r.data <= ^Date.from_iso8601!(params["end_date"])
+      else
+        query
+      end
+
+    # Ordenação por maiores valores
+    query =
+      if params["order_by"] == "highest" do
+        from r in query, order_by: [desc: r.valor]
+      else
+        query
+      end
+
+    # Ordenação por menores valores
+    query =
+      if params["order_by"] == "lowest" do
+        from r in query, order_by: [asc: r.valor]
+      else
+        query
+      end
+
+    Repo.all(query)
+  end
+
+
   @doc """
   Returns the list of receitas.
 
