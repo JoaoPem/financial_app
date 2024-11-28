@@ -105,6 +105,52 @@ defmodule FinancialApp.Finance do
   alias FinancialApp.Finance.Despesa
 
   @doc """
+  Filtra despesas com base nos critérios fornecidos.
+  """
+  def filter_despesas(params) do
+    query = from d in Despesa
+
+    # Filtro por mês
+    query =
+      if params["month"] && params["month"] != "" do
+        case Integer.parse(params["month"]) do
+          {month, _} -> from d in query, where: fragment("EXTRACT(MONTH FROM ?)", d.data) == ^month
+          :error -> query
+        end
+      else
+        query
+      end
+
+    # Filtro por intervalo de datas
+    query =
+      if params["start_date"] != "" && params["end_date"] != "" do
+        from d in query, where: d.data >= ^Date.from_iso8601!(params["start_date"]) and d.data <= ^Date.from_iso8601!(params["end_date"])
+      else
+        query
+      end
+
+    # Ordenação por maiores valores
+    query =
+      if params["order_by"] == "highest" do
+        from d in query, order_by: [desc: d.valor]
+      else
+        query
+      end
+
+    # Ordenação por menores valores
+    query =
+      if params["order_by"] == "lowest" do
+        from d in query, order_by: [asc: d.valor]
+      else
+        query
+      end
+
+    Repo.all(query)
+  end
+
+
+
+  @doc """
   Returns the list of despesas.
 
   ## Examples

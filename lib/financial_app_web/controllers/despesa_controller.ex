@@ -4,8 +4,14 @@ defmodule FinancialAppWeb.DespesaController do
   alias FinancialApp.Finance
   alias FinancialApp.Finance.Despesa
 
-  def index(conn, _params) do
-    despesas = Finance.list_despesas()
+  def index(conn, params) do
+    despesas =
+      if Enum.empty?(params) do
+        Finance.list_despesas()
+      else
+        Finance.filter_despesas(params)
+      end
+
     render(conn, :index, despesas: despesas)
   end
 

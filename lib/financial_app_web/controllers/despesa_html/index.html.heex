@@ -2,11 +2,62 @@
   Listing Despesas
   <:actions>
     <.link href={~p"/despesas/new"}>
-      <.button>New Despesa</.button>
+      <.button class="bg-green-500 text-white hover:bg-green-600">New Despesa</.button>
     </.link>
   </:actions>
 </.header>
 
+<!-- Formulário de Filtros -->
+<div class="mt-6">
+  <form action={~p"/despesas"} method="get" class="mb-4">
+    <div class="grid grid-cols-4 gap-4">
+      <!-- Campo para selecionar o mês -->
+      <div>
+        <label for="month" class="block text-sm font-medium">Mês:</label>
+        <select id="month" name="month" class="block w-full mt-1 border-gray-300 rounded">
+          <option value="">Todos</option>
+          <%= for month <- 1..12 do %>
+            <option value={month}><%= month %></option>
+          <% end %>
+        </select>
+      </div>
+
+      <!-- Campo para a data inicial -->
+      <div>
+        <label for="start_date" class="block text-sm font-medium">Data Inicial:</label>
+        <input type="date" id="start_date" name="start_date" class="block w-full mt-1 border-gray-300 rounded" />
+      </div>
+
+      <!-- Campo para a data final -->
+      <div>
+        <label for="end_date" class="block text-sm font-medium">Data Final:</label>
+        <input type="date" id="end_date" name="end_date" class="block w-full mt-1 border-gray-300 rounded" />
+      </div>
+
+      <!-- Campo para ordenação -->
+      <div>
+        <label for="order_by" class="block text-sm font-medium">Ordenar por:</label>
+        <select id="order_by" name="order_by" class="block w-full mt-1 border-gray-300 rounded">
+          <option value="">Nenhum</option>
+          <option value="highest">Maiores Despesas</option>
+          <option value="lowest">Menores Despesas</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Botões de ação -->
+    <div class="flex justify-between mt-4">
+      <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        Filtrar
+      </button>
+      <.link href={~p"/despesas"} class="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400">
+        Limpar Filtros
+      </.link>
+    </div>
+  </form>
+</div>
+
+<!-- Tabela de Despesas -->
 <.table id="despesas" rows={@despesas} row_click={&JS.navigate(~p"/despesas/#{&1}")}>
   <:col :let={despesa} label="Nome"><%= despesa.nome %></:col>
   <:col :let={despesa} label="Valor"><%= despesa.valor %></:col>
